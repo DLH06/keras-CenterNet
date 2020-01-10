@@ -21,11 +21,15 @@ import os
 from six import raise_from
 import xml.etree.ElementTree as ET
 
+try:
+    with open('./classes.txt', 'r') as f:
+        data = f.read()
+    data = data.split('\n')[:-1]
+    voc_classes = {data[i] : i for i,v in enumerate(data)}
 
-with open('./classes.txt', 'r') as f:
-    data = f.read()
-data = data.split('\n')[:-1]
-voc_classes = {data[i] : i for i,v in enumerate(data)}
+    print(voc_classes)
+except Exception as ex:
+    print(ex)
 
 
 def _findNode(parent, name, debug_name=None, parse=None):
@@ -55,7 +59,7 @@ class PascalVocGenerator(Generator):
             data_dir,
             set_name,
             classes=voc_classes,
-            image_extension='.jpg',
+            image_extension='.png',
             skip_truncated=False,
             skip_difficult=False,
             **kwargs
@@ -155,10 +159,10 @@ class PascalVocGenerator(Generator):
         label = self.name_to_label(class_name)
 
         bndbox = _findNode(element, 'bndbox')
-        box[0] = _findNode(bndbox, 'xmin', 'bndbox.xmin', parse=float) - 1
-        box[1] = _findNode(bndbox, 'ymin', 'bndbox.ymin', parse=float) - 1
-        box[2] = _findNode(bndbox, 'xmax', 'bndbox.xmax', parse=float) - 1
-        box[3] = _findNode(bndbox, 'ymax', 'bndbox.ymax', parse=float) - 1
+        box[0] = _findNode(bndbox, 'xmin', 'bndbox.xmin', parse=float)
+        box[1] = _findNode(bndbox, 'ymin', 'bndbox.ymin', parse=float)
+        box[2] = _findNode(bndbox, 'xmax', 'bndbox.xmax', parse=float)
+        box[3] = _findNode(bndbox, 'ymax', 'bndbox.ymax', parse=float)
 
         return truncated, difficult, box, label
 
@@ -206,7 +210,7 @@ if __name__ == '__main__':
     visual_effect = VisualEffect()
 
     generator = PascalVocGenerator(
-        'datasets/VOC0712',
+        'dataset',
         'trainval',
         skip_difficult=True,
         misc_effect=misc_effect,
