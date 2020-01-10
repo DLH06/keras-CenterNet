@@ -310,6 +310,7 @@ def main(args=None):
 
     # create the model
     print('Loading model, this may take a second...')
+    args.snapshot = os.path.join('model_weight', 'ResNet-50-model.keras.h5')
     model.load_weights(args.snapshot, by_name=True, skip_mismatch=True)
 
     # freeze layers
